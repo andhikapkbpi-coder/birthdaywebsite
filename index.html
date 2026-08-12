@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#101613">
+    <title>A Little Journey</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <button class="btn" id="startBtn">Start Journey</button>
+
+    <main class="opening">
+        <div id="background"></div>
+
+        <div id="content">
+            <button class="btn" id="nextBtn">Next</button>
+        </div>
+
+        <!-- Characters -->
+        <div class="characters">
+            <img class="krong" id="krong" src="krongOpen.png" alt="Krong">
+            <img class="keroppi" id="keroppi" src="keroppiOpen.png" alt="Keroppi">
+        </div>
+
+        <!-- Bubble Krong -->
+        <div class="bubbleKrong">
+            <p id="dialogKrong"></p>
+            <div id="krongBubble"></div>
+        </div>
+        <div class="tailBig" id="tailBigKrong"></div>
+        <div class="tailSmall" id="tailSmallKrong"></div>
+        <div class="tailLittle" id="tailLittleKrong"></div>
+
+        <!-- Bubble Keroppi -->
+        <div class="bubbleKeroppi">
+            <p id="dialogKeroppi"></p>
+            <div id="keroppiBubble"></div>
+        </div>
+        <div class="tailBig" id="tailBigKeroppi"></div>
+        <div class="tailSmall" id="tailSmallKeroppi"></div>
+        <div class="tailLittle" id="tailLittleKeroppi"></div>
+
+        <!-- Mini Quiz -->
+        <section class="miniQuiz" aria-label="Mini Quiz">
+            <button class="btn" id="quizBtn">Start Mini Quiz</button>
+            <div id="question"></div>
+            <button class="btn" id="nextQuestion">Next Question</button>
+
+            <div class="option">
+                <button id="optionA"></button>
+                <button id="optionB"></button>
+            </div>
+
+            <div class="answer">
+                <button id="answerA"></button>
+                <button id="answerB"></button>
+            </div>
+        </section>
+
+        <!-- Countdown + typewriter -->
+        <section class="countdown" id="countdownScene" aria-live="polite">
+            <div id="fadeCountdown"></div>
+
+            <div id="countdownClock" aria-label="Countdown menuju 12 Agustus 2026">
+                <div class="countdownHeader">
+                    <span>THE JOURNEY CONTINUES IN</span>
+                    <strong>12 AUGUST 2026</strong>
+                </div>
+
+                <div class="countdownUnits">
+                    <div class="timeUnit">
+                        <div class="flipCard" data-unit="days"><div class="flipFace"><span id="daysValue">00</span></div></div>
+                        <span class="unitLabel">DAYS</span>
+                    </div>
+                    <div class="timeSeparator">:</div>
+                    <div class="timeUnit">
+                        <div class="flipCard" data-unit="hours"><div class="flipFace"><span id="hoursValue">00</span></div></div>
+                        <span class="unitLabel">HOURS</span>
+                    </div>
+                    <div class="timeSeparator">:</div>
+                    <div class="timeUnit">
+                        <div class="flipCard" data-unit="minutes"><div class="flipFace"><span id="minutesValue">00</span></div></div>
+                        <span class="unitLabel">MINUTES</span>
+                    </div>
+                    <div class="timeSeparator">:</div>
+                    <div class="timeUnit">
+                        <div class="flipCard" data-unit="seconds"><div class="flipFace"><span id="secondsValue">00</span></div></div>
+                        <span class="unitLabel">SECONDS</span>
+                    </div>
+                </div>
+
+                <div class="countdownHint">Almost there. ✦</div>
+            </div>
+
+            <div id="typewritterCountdown">
+                <span id="typingText"></span><span id="cursor">|</span>
+            </div>
+        </section>
+
+        <!-- FINAL STOP: Giftbox -->
+        <section class="giftScene" id="giftScene" aria-label="Gift">
+            <div class="giftGlow"></div>
+
+            <div class="giftIntro">
+                <span>A LITTLE SOMETHING</span>
+                <h1>There's a gift for you.</h1>
+                <p>Enggak perlu buru-buru. Cukup buka pelan-pelan.</p>
+            </div>
+
+            <button class="giftButton" id="giftButton" aria-label="Open the gift">
+                <span class="giftShadow"></span>
+                <span class="giftBox">
+                    <span class="giftBody"></span>
+                    <span class="giftRibbonVertical"></span>
+                    <span class="giftRibbonHorizontal"></span>
+                    <span class="giftLid">
+                        <span class="lidRibbon"></span>
+                    </span>
+                    <span class="giftBow">
+                        <span class="bowLeft"></span>
+                        <span class="bowRight"></span>
+                        <span class="bowCenter"></span>
+                    </span>
+                    <span class="giftCard">
+                        <span>One little thing,</span>
+                        <strong>wrapped with a lot of thought.</strong>
+                    </span>
+                </span>
+            </button>
+
+            <div class="giftHint" id="giftHint">Click the box.</div>
+
+            <div class="giftSparks" aria-hidden="true">
+                <span>✦</span><span>✧</span><span>✦</span><span>✧</span><span>✦</span>
+            </div>
+
+            <button class="giftNext btn" id="giftNextBtn">Next</button>
+        </section>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
