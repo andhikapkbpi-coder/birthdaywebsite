@@ -1,144 +1,227 @@
-<!DOCTYPE html>
-<html lang="id">
+<!doctype html>
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <meta name="theme-color" content="#101613">
-    <title>A Little Journey</title>
-    <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Alee — A Little Story</title>
+<style>
+:root{--cream:#f7f0e3;--ink:#332d2e;--pink:#e7a6b8;--sage:#849b84;--shadow:rgba(30,23,20,.34)}
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden}
+body{font-family:Arial,Helvetica,sans-serif;background:radial-gradient(circle at 15% 10%,rgba(231,166,184,.22),transparent 30%),radial-gradient(circle at 85% 85%,rgba(132,155,132,.22),transparent 35%),#d7d0c3;color:var(--ink)}
+button{font:inherit}.app{width:100%;height:100%;position:relative;display:grid;place-items:center;padding:12px}
+.book-shell{width:min(94vw,1120px,calc(86vh * 1.333333));aspect-ratio:4 / 3;height:auto;min-height:0;perspective:2200px;position:relative}
+.book{position:absolute;inset:0;transform-style:preserve-3d;filter:drop-shadow(0 26px 28px var(--shadow));cursor:pointer}
+.spread{position:absolute;inset:0;display:grid;grid-template-columns:1fr 1fr;overflow:hidden;border-radius:5px;background:var(--cream)}
+.page{position:relative;overflow:hidden;background:var(--cream)}.page img{width:100%;height:100%;object-fit:cover;display:block;pointer-events:none}
+.spread:after{content:"";position:absolute;top:0;bottom:0;left:50%;width:2px;transform:translateX(-1px);background:linear-gradient(90deg,rgba(0,0,0,.14),rgba(255,255,255,.45),rgba(0,0,0,.07));pointer-events:none}
+.cover{position:absolute;top:0;right:0;width:50%;height:100%;transform-origin:left center;transform-style:preserve-3d;transition:transform .62s cubic-bezier(.2,.78,.18,1);z-index:20;box-shadow:-10px 0 24px rgba(0,0,0,.16)}
+.cover.open{transform:rotateY(-180deg)}.cover-face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;overflow:hidden}
+.cover-front img{width:100%;height:100%;object-fit:cover}.cover-back{transform:rotateY(180deg);background:var(--cream)}
+.scene{position:absolute;inset:0;display:grid;place-items:center;opacity:0;visibility:hidden;pointer-events:none;transition:opacity .45s ease}
+.scene.active{opacity:1;visibility:visible;pointer-events:auto}.scene .spread{position:absolute}
+.next-btn{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);z-index:80;border:1px solid rgba(255,255,255,.35);background:rgba(47,43,43,.90);color:#fff;padding:11px 22px;border-radius:999px;box-shadow:0 10px 22px rgba(0,0,0,.20);opacity:0;visibility:hidden;pointer-events:none;transition:.3s}
+.next-btn.show{opacity:1;visibility:visible;pointer-events:auto}.next-btn:active{transform:translateX(-50%) scale(.97)}
+.hint{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);z-index:70;background:rgba(47,43,43,.80);color:#fff;padding:9px 15px;border-radius:999px;font-size:12px;transition:.3s;white-space:nowrap}.hint.hide{opacity:0}
+.progress{position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:70;padding:7px 11px;border-radius:999px;background:rgba(255,255,255,.72);backdrop-filter:blur(10px);font-size:10px;letter-spacing:.16em;text-transform:uppercase}
+#transcriptScene{background:radial-gradient(circle at 50% 20%,rgba(231,166,184,.14),transparent 32%),#111714;color:#f6f0e7;padding:18px;overflow:hidden}
+.transcript-wrap{width:min(920px,94vw);height:min(86vh,760px);display:flex;flex-direction:column;gap:18px}
+.transcript-head{display:flex;align-items:flex-end;justify-content:space-between;gap:15px}.eyebrow{font-size:10px;letter-spacing:.24em;color:#b8c8b4;text-transform:uppercase}
+.transcript-head h2{font-family:Georgia,serif;font-weight:500;color:#efb7c8;font-size:clamp(28px,5vw,54px);margin:7px 0 0}
+.player{display:flex;align-items:center;gap:14px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.10);border-radius:20px;padding:14px 16px;box-shadow:0 16px 40px rgba(0,0,0,.22)}
+.play{width:54px;height:54px;border:0;border-radius:50%;background:#f0b5c7;color:#2a2526;font-size:20px;display:grid;place-items:center;flex:none;cursor:pointer}
+.player-main{flex:1;min-width:0}.player-title{font-weight:700;font-size:14px}.player-sub{font-size:11px;opacity:.62;margin-top:4px}
+.progressbar{margin-top:10px;height:5px;border-radius:99px;background:rgba(255,255,255,.10);overflow:hidden;cursor:pointer}.progressbar span{display:block;height:100%;width:0;background:#e7a6b8;border-radius:99px}
+.transcript{flex:1;min-height:0;overflow:auto;padding:14px 4px 30px;scrollbar-width:thin}
+.line{max-width:760px;margin:0 auto;padding:13px 18px;border-radius:15px;color:rgba(255,255,255,.40);font-size:clamp(15px,2.1vw,20px);line-height:1.55;transition:.35s}
+.line.active{color:#fff;background:rgba(231,166,184,.10);box-shadow:inset 3px 0 #e7a6b8}.line.past{color:rgba(255,255,255,.68)}
+.transcript-meta{display:flex;flex-wrap:wrap;align-items:center;gap:7px 14px;padding:12px 15px;border:1px solid rgba(255,255,255,.09);border-radius:16px;background:rgba(255,255,255,.045);box-shadow:0 10px 26px rgba(0,0,0,.12)}
+.meta-line{display:flex;align-items:baseline;gap:7px;font-size:12px;color:rgba(255,255,255,.56)}
+.meta-line span{font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:#b8c8b4}
+.meta-line strong{font-size:12px;color:rgba(255,255,255,.88);font-weight:600}
+.pronunciation-note{width:100%;font-size:10px;font-style:italic;color:rgba(239,183,200,.72);margin-top:2px}
+.audio-note{font-size:11px;opacity:.48;text-align:center;margin-top:-4px}.file-missing{display:none;color:#ffd6df;font-size:12px;text-align:center}
+
+/* Candle scene */
+#candleScene{background:radial-gradient(circle at 50% 58%,rgba(245,190,94,.10),transparent 22%),radial-gradient(circle at 50% 28%,rgba(132,155,132,.07),transparent 34%),#0d1411;color:#f6f0e7;padding:20px;overflow:hidden}
+.candle-wrap{width:min(720px,94vw);height:min(88vh,780px);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;position:relative}
+.candle-eyebrow{font-size:10px;letter-spacing:.34em;color:#aebfa8;text-transform:uppercase;margin-bottom:8px}
+.candle-title{font-family:Georgia,"Times New Roman",serif;font-weight:500;color:#efb7c8;font-size:clamp(38px,7vw,72px);line-height:1;margin:0 0 18px}
+.candle-copy{font-size:clamp(14px,2vw,18px);line-height:1.7;color:rgba(255,255,255,.76);max-width:620px;margin:0 auto}
+.candle-copy strong{color:#fff;font-weight:700}
+.candle-spacer{height:clamp(42px,7vh,72px)}
+.candle-stage{position:relative;width:300px;height:360px;display:flex;align-items:flex-end;justify-content:center}
+.candle-glow{position:absolute;top:18px;left:50%;width:190px;height:190px;transform:translateX(-50%);border-radius:50%;background:radial-gradient(circle,rgba(255,207,106,.23) 0%,rgba(255,184,70,.11) 28%,transparent 68%);filter:blur(2px);pointer-events:none}
+.flame-hit{position:absolute;top:30px;left:50%;width:90px;height:110px;transform:translateX(-50%);border:0;background:transparent;cursor:pointer;z-index:5}
+.flame{position:absolute;top:45px;left:50%;width:44px;height:68px;transform:translateX(-50%) rotate(9deg);border-radius:58% 42% 58% 42%;background:linear-gradient(135deg,#fff9ce 0%,#ffd76a 34%,#ff9b3d 70%,#e96b32 100%);box-shadow:0 0 22px rgba(255,193,81,.72),0 0 52px rgba(255,170,55,.28);animation:flameDance 1.1s ease-in-out infinite alternate;transform-origin:50% 90%}
+.flame:after{content:"";position:absolute;left:50%;bottom:10px;width:17px;height:31px;transform:translateX(-50%);border-radius:50%;background:#fff7d1;filter:blur(.3px)}
+.wick{position:absolute;top:100px;left:50%;width:4px;height:28px;transform:translateX(-50%);border-radius:4px;background:#332c24;z-index:3}
+.candle-body{position:absolute;bottom:18px;left:50%;width:184px;height:230px;transform:translateX(-50%);border-radius:24px 24px 18px 18px;background:linear-gradient(90deg,#e9e0d0 0%,#fff8ea 22%,#f8efe1 58%,#ded4c4 100%);box-shadow:inset 10px 0 18px rgba(255,255,255,.38),inset -12px 0 20px rgba(126,103,78,.10),0 22px 35px rgba(0,0,0,.34);z-index:2}
+.candle-top{position:absolute;left:50%;top:-16px;width:184px;height:48px;transform:translateX(-50%);border-radius:50%;background:radial-gradient(ellipse at 50% 45%,#d8cdbb 0 25%,#eee6d8 27% 57%,#fff8ea 60% 100%);box-shadow:inset 0 -5px 8px rgba(117,95,70,.10);z-index:4}
+.candle-hole{position:absolute;left:50%;top:14px;width:24px;height:12px;transform:translateX(-50%);border-radius:50%;background:#a79783;opacity:.68}
+.candle-button{margin-top:8px;border:1px solid rgba(255,255,255,.16);background:rgba(20,24,21,.72);color:rgba(255,255,255,.78);padding:11px 18px;border-radius:999px;font-size:12px;letter-spacing:.02em;box-shadow:0 8px 24px rgba(0,0,0,.24);cursor:pointer;transition:.25s}
+.candle-button:active{transform:scale(.97)}
+@keyframes flameDance{from{transform:translateX(-50%) rotate(6deg) scale(.98,.98)}to{transform:translateX(-50%) rotate(13deg) scale(1.03,1.05)}}
+.candle-scene-in{animation:candleSceneIn .85s ease both}
+.flame.blown{
+  animation:none;
+  opacity:0;
+  transform:translateX(-50%) translateY(12px) scale(.35);
+  filter:blur(3px);
+  transition:opacity .45s ease, transform .45s ease, filter .45s ease;
+}
+
+.candle-glow.blown{
+  opacity:0;
+  transform:translateX(-50%) scale(.7);
+  transition:opacity .7s ease, transform .7s ease;
+}
+@keyframes candleSceneIn{from{opacity:0;transform:scale(1.018)}to{opacity:1;transform:scale(1)}}
+.scene.fade-out{opacity:0!important;visibility:hidden!important;pointer-events:none!important}
+@media(max-width:700px){.candle-stage{transform:scale(.92);transform-origin:center top;margin-bottom:-24px}.candle-copy{max-width:340px}.candle-spacer{height:32px}}
+
+@media(max-width:700px){.book-shell{width:94vw;aspect-ratio:4 / 3;height:auto;min-height:0}.next-btn{bottom:13px}}
+</style>
 </head>
 <body>
-    <button class="btn" id="startBtn">Start Journey</button>
+<div class="app">
+<div class="book-shell" id="bookShell"><div class="book" id="book">
+<div class="scene active" id="sceneCover"><div class="spread"><div class="page"><img src="cover-left.jpeg"></div><div class="page"></div></div><div class="cover" id="cover"><div class="cover-face cover-front"><img src="cover-right.jpeg"></div><div class="cover-face cover-back"></div></div></div>
+<div class="scene" id="scene1"><div class="spread"><div class="page"><img src="page1-left.jpeg"></div><div class="page"><img src="page1-right.jpeg"></div></div></div>
+<div class="scene" id="scene2"><div class="spread"><div class="page"><img src="page2-left.jpeg"></div><div class="page"><img src="page2-right.jpeg"></div></div></div>
+<div class="scene" id="scene3"><div class="spread"><div class="page"><img src="page3-left.jpeg"></div><div class="page"><img src="page3-right.jpeg"></div></div></div>
+</div></div>
 
-    <main class="opening">
-        <div id="background"></div>
+<section class="scene" id="transcriptScene"><div class="transcript-wrap">
+<div class="transcript-head"><div><div class="eyebrow">A little something for Alee</div><h2>Listen.</h2></div><div class="eyebrow">Voice note · 01</div></div>
+<div class="player"><button class="play" id="playBtn">▶</button><div class="player-main"><div class="player-title">For Alee</div><div class="player-sub" id="playerTime">00:00 / 03:57</div><div class="progressbar" id="progressBar"><span id="progressFill"></span></div></div></div>
+<div class="file-missing" id="fileMissing"></div>
+<div class="transcript-meta">
+  <div class="meta-line"><span>For</span><strong>Alexandra Quincy Al-Buchory</strong></div>
+  <div class="meta-line"><span>A.K.A.</span><strong>Aleeca or Alee</strong></div>
+  <div class="meta-line"><span>From</span><strong>Krong</strong></div>
+  <div class="pronunciation-note">Semangat ospeknya, btw ikan pindangnya diperlihatkan</div>
+</div>
+<div class="transcript" id="transcript"></div><div class="audio-note">Transkrip akan mengikuti suara secara otomatis · Voice note 03:57</div>
+</div><audio id="voice" preload="metadata" src="voice-note.mp3"></audio></section>
 
-        <div id="content">
-            <button class="btn" id="nextBtn">Next</button>
-        </div>
+<section class="scene" id="candleScene">
+  <div class="candle-wrap">
+    <div class="candle-eyebrow">A little pause</div>
+    <h2 class="candle-title">Make a Wish</h2>
+    <p class="candle-copy">Untuk beberapa detik, enggak perlu mikirin apa pun.<br>Cukup berhenti sebentar.<br><br>Tarik napas.<br>Dan pikirkan satu hal yang benar-benar <strong>Alee</strong> inginkan.</p>
+    <div class="candle-spacer"></div>
+    <div class="candle-stage" aria-label="Birthday candle">
+      <div class="candle-glow"></div>
+      <button class="flame-hit" id="flameHit" aria-label="Klik api lilin"></button>
+      <div class="flame"></div>
+      <div class="wick"></div>
+      <div class="candle-body"><div class="candle-top"><div class="candle-hole"></div></div></div>
+    </div>
+    <button class="candle-button" id="candleHint">Click the fire if u are done.</button>
+  </div>
+</section>
 
-        <!-- Characters -->
-        <div class="characters">
-            <img class="krong" id="krong" src="krongOpen.png" alt="Krong">
-            <img class="keroppi" id="keroppi" src="keroppiOpen.png" alt="Keroppi">
-        </div>
+<div class="progress" id="progress">Cover</div><div class="hint" id="hint">Tap anywhere to open the scrapbook</div><button class="next-btn" id="nextBtn">Next →</button>
+</div>
+<script>
+  if(performance.getEntriesByType('navigation')[0]?.type === 'reload') {
+    window.location.href = '../index.html';
+  }
+(()=> {
+const scenes=[...document.querySelectorAll("#book .scene")],cover=document.getElementById("cover"),book=document.getElementById("book"),hint=document.getElementById("hint"),next=document.getElementById("nextBtn"),progress=document.getElementById("progress"),bookShell=document.getElementById("bookShell"),transcriptScene=document.getElementById("transcriptScene"),candleScene=document.getElementById("candleScene"),flameHit=document.getElementById("flameHit"),candleHint=document.getElementById("candleHint");
+let page=0,locked=false;
+function show(n){scenes.forEach((s,i)=>s.classList.toggle("active",i===n));page=n;next.classList.add("show");progress.textContent=n===0?"Cover":`Page ${n}`;hint.classList.add("hide")}
+function openBook(){if(locked)return;locked=true;show(1);cover.classList.add("open");setTimeout(()=>locked=false,650)}
+book.addEventListener("click",()=>{if(page===0)return openBook();if(page>=1&&page<3)show(page+1)});
+next.addEventListener("click",e=>{e.stopPropagation();if(page<3){show(page+1);return}bookShell.style.display="none";next.classList.remove("show");hint.classList.add("hide");transcriptScene.classList.add("active");progress.textContent="Voice note"});
+function showCandle(){
+  transcriptScene.classList.add("fade-out");
+  setTimeout(()=>{
+    transcriptScene.classList.remove("active");
+    candleScene.classList.remove("fade-out");
+    candleScene.classList.add("active","candle-scene-in");
+    progress.textContent=" Wish";
+  },700);
+}
 
-        <!-- Bubble Krong -->
-        <div class="bubbleKrong">
-            <p id="dialogKrong"></p>
-            <div id="krongBubble"></div>
-        </div>
-        <div class="tailBig" id="tailBigKrong"></div>
-        <div class="tailSmall" id="tailSmallKrong"></div>
-        <div class="tailLittle" id="tailLittleKrong"></div>
+const transcript=[
+['For Alexandra Quincy Al-Buchory, aka Aleeca or Alee, from Krong.', 0],
+['Hey, Alee.', 14.7],
+['So… Alee made it this far.', 18.1],
+['Kalau dipikir-pikir lagi, ada banyak hal yang terjadi sebelum Alee sampai di titik ini.', 20.4],
+['Ada malam-malam panjang, rasa capek, overthinking, rasa ragu sama diri sendiri, dan mungkin ada beberapa hari ketika semuanya terasa jauh lebih berat dari yang Alee bayangkan.', 27.4],
+['Tapi meskipun begitu…', 43.3],
+['Alee tetap jalan.', 46.2],
+['Mungkin Alee sendiri nggak selalu sadar seberapa jauh Alee sudah berkembang.', 48.6],
+['Kadang kita terlalu sibuk memikirkan apa yang harus dilakukan selanjutnya sampai lupa melihat kembali semua hal yang sudah berhasil dilewati.', 55.1],
+['Jadi, hari ini…', 65.8],
+['Coba berhenti sebentar.', 68.2],
+['Lihat kembali semua hal yang sudah Alee lewati.', 71],
+['Hal-hal yang dulu mungkin cuma Alee harapkan, sekarang sudah menjadi bagian dari cerita Alee.', 74.6],
+['Ada hal yang berhasil.', 81.4],
+['Ada yang mungkin nggak berjalan sesuai rencana.', 83.6],
+['Ada hari yang menyenangkan.', 87.1],
+['Ada juga hari yang rasanya ingin cepat-cepat dilupakan.', 89.5],
+['Tapi semuanya tetap membawa Alee sampai ke sini.', 93.8],
+['And Alee did it.', 98.8],
+['Alee sudah pernah melewati masa-masa sulit sebelumnya.', 102.1],
+['Jadi kalau suatu hari nanti Alee kembali merasa ragu, semoga Alee ingat satu hal', 105.1],
+['Alee pernah berpikir bahwa sesuatu mungkin terlalu sulit untuk dilewati.', 113.1],
+['Tapi ternyata…', 117.7],
+['Alee bisa.', 119.2],
+['Alee nggak harus selalu tahu apa yang akan terjadi setelah ini.', 121.6],
+['Nggak harus punya semuanya figured out.', 125.7],
+['Nggak harus selalu kuat setiap saat.', 129],
+['Pelan-pelan aja.', 131.2],
+['Coba.', 132.7],
+['Gagal.', 133.8],
+['Belajar.', 135.1],
+['Coba lagi.', 136],
+['Dan jangan lupa menikmati hal-hal kecil di sepanjang perjalanan.', 137.5],
+['Karena hidup bukan cuma tentang pencapaian yang bisa ditulis di sebuah halaman.', 142.4],
+['Kadang, hal-hal kecil yang bahkan enggak pernah masuk ke daftar pencapaian justru menjadi bagian yang paling berharga untuk diingat.', 149.2],
+['So today, Alee deserves to celebrate.', 158.9],
+['Happy birthday, Alee.', 164],
+['Semoga di umur yang baru ini, Alee menemukan lebih banyak alasan untuk tersenyum, lebih banyak hal yang membuat Alee bangga, dan lebih banyak momen yang suatu hari nanti bisa Alee lihat kembali sambil tersenyum dan berkata,',168],
+['“Ternyata aku sudah sejauh ini.”', 185.1],
+['And before this little story ends…', 187.4],
+['There is one more thing.', 189.3],
+['Make a wish.', 193.1],
+['Untuk beberapa detik, enggak perlu mikirin sekolah, masa depan, ekspektasi, atau apa pun yang sedang Alee kejar.', 195.4],
+['Cukup diam sebentar.', 205.6],
+['Tarik napas.', 207.5],
+['Pikirkan satu hal yang benar-benar Alee inginkan.', 209.6],
+['Sesuatu yang mungkin belum pernah Alee ceritakan ke siapa-siapa.', 213.3],
+['Sesuatu yang Alee harap bisa menjadi nyata.', 217.3],
+['Dan ketika Alee sudah siap…', 219.6],
+['Click the candle when u are ready.',223.6 ],
+['Happy birthday, Alee.', 226.2],
+['Here is to another chapter.', 228.18],
+['Sorry if my pronunciation isnt very clear.',230.4]]
 
-        <!-- Bubble Keroppi -->
-        <div class="bubbleKeroppi">
-            <p id="dialogKeroppi"></p>
-            <div id="keroppiBubble"></div>
-        </div>
-        <div class="tailBig" id="tailBigKeroppi"></div>
-        <div class="tailSmall" id="tailSmallKeroppi"></div>
-        <div class="tailLittle" id="tailLittleKeroppi"></div>
+const voice=document.getElementById("voice"),play=document.getElementById("playBtn"),box=document.getElementById("transcript"),fill=document.getElementById("progressFill"),time=document.getElementById("playerTime"),bar=document.getElementById("progressBar"),missing=document.getElementById("fileMissing");
+transcript.forEach(x=>{const d=document.createElement("div");d.className="line";d.textContent=x[0];box.appendChild(d)});const lines=[...box.children];
+const fmt=t=>!Number.isFinite(t)?"00:00":String(Math.floor(t/60)).padStart(2,"0")+":"+String(Math.floor(t%60)).padStart(2,"0");
+function sync(){const t=voice.currentTime||0;let a=0;for(let i=0;i<transcript.length;i++)if(t>=transcript[i][1])a=i;lines.forEach((l,i)=>{l.classList.toggle("active",i===a);l.classList.toggle("past",i<a)});if(lines[a])lines[a].scrollIntoView({behavior:"smooth",block:"center"});fill.style.width=(voice.duration?(t/voice.duration)*100:0)+"%";time.textContent=`${fmt(t)} / ${fmt(voice.duration)}`}
+play.addEventListener("click",()=>{if(voice.error){missing.style.display="block";return}if(voice.paused)voice.play().catch(()=>missing.style.display="block");else voice.pause()});
+voice.addEventListener("play",()=>play.textContent="Ⅱ");voice.addEventListener("pause",()=>play.textContent="▶");voice.addEventListener("timeupdate",sync);voice.addEventListener("loadedmetadata",sync);voice.addEventListener("error",()=>missing.style.display="block");
+voice.addEventListener("ended",showCandle);
+flameHit.addEventListener("click",()=>{
+  const flame = document.querySelector(".flame");
+  const glow = document.querySelector(".candle-glow");
 
-        <!-- Mini Quiz -->
-        <section class="miniQuiz" aria-label="Mini Quiz">
-            <button class="btn" id="quizBtn">Start Mini Quiz</button>
-            <div id="question"></div>
-            <button class="btn" id="nextQuestion">Next Question</button>
+  // Padamkan api
+  flame.classList.add("blown");
+  glow.classList.add("blown");
 
-            <div class="option">
-                <button id="optionA"></button>
-                <button id="optionB"></button>
-            </div>
-
-            <div class="answer">
-                <button id="answerA"></button>
-                <button id="answerB"></button>
-            </div>
-        </section>
-
-        <!-- Countdown + typewriter -->
-        <section class="countdown" id="countdownScene" aria-live="polite">
-            <div id="fadeCountdown"></div>
-
-            <div id="countdownClock" aria-label="Countdown menuju 12 Agustus 2026">
-                <div class="countdownHeader">
-                    <span>THE JOURNEY CONTINUES IN</span>
-                    <strong>12 AUGUST 2026</strong>
-                </div>
-
-                <div class="countdownUnits">
-                    <div class="timeUnit">
-                        <div class="flipCard" data-unit="days"><div class="flipFace"><span id="daysValue">00</span></div></div>
-                        <span class="unitLabel">DAYS</span>
-                    </div>
-                    <div class="timeSeparator">:</div>
-                    <div class="timeUnit">
-                        <div class="flipCard" data-unit="hours"><div class="flipFace"><span id="hoursValue">00</span></div></div>
-                        <span class="unitLabel">HOURS</span>
-                    </div>
-                    <div class="timeSeparator">:</div>
-                    <div class="timeUnit">
-                        <div class="flipCard" data-unit="minutes"><div class="flipFace"><span id="minutesValue">00</span></div></div>
-                        <span class="unitLabel">MINUTES</span>
-                    </div>
-                    <div class="timeSeparator">:</div>
-                    <div class="timeUnit">
-                        <div class="flipCard" data-unit="seconds"><div class="flipFace"><span id="secondsValue">00</span></div></div>
-                        <span class="unitLabel">SECONDS</span>
-                    </div>
-                </div>
-
-                <div class="countdownHint">Almost there. ✦</div>
-            </div>
-
-            <div id="typewritterCountdown">
-                <span id="typingText"></span><span id="cursor">|</span>
-            </div>
-        </section>
-
-        <!-- FINAL STOP: Giftbox -->
-        <section class="giftScene" id="giftScene" aria-label="Gift">
-            <div class="giftGlow"></div>
-
-            <div class="giftIntro">
-                <span>A LITTLE SOMETHING</span>
-                <h1>There's a gift for you.</h1>
-                <p>Enggak perlu buru-buru. Cukup buka pelan-pelan.</p>
-            </div>
-
-            <button class="giftButton" id="giftButton" aria-label="Open the gift">
-                <span class="giftShadow"></span>
-                <span class="giftBox">
-                    <span class="giftBody"></span>
-                    <span class="giftRibbonVertical"></span>
-                    <span class="giftRibbonHorizontal"></span>
-                    <span class="giftLid">
-                        <span class="lidRibbon"></span>
-                    </span>
-                    <span class="giftBow">
-                        <span class="bowLeft"></span>
-                        <span class="bowRight"></span>
-                        <span class="bowCenter"></span>
-                    </span>
-                    <span class="giftCard">
-                        <span>One little thing,</span>
-                        <strong>wrapped with a lot of thought.</strong>
-                    </span>
-                </span>
-            </button>
-
-            <div class="giftHint" id="giftHint">Click the box.</div>
-
-            <div class="giftSparks" aria-hidden="true">
-                <span>✦</span><span>✧</span><span>✦</span><span>✧</span><span>✦</span>
-            </div>
-
-            <button class="giftNext btn" id="giftNextBtn">Next</button>
-        </section>
-    </main>
-
-    <script src="script.js"></script>
+  // Ubah teks setelah api padam
+  setTimeout(()=>{
+    candleHint.textContent="Make a wish. ✨";
+    candleHint.style.borderColor="rgba(239,183,200,.38)";
+  },450);
+});
+bar.addEventListener("click",e=>{if(!voice.duration)return;const r=bar.getBoundingClientRect();voice.currentTime=((e.clientX-r.left)/r.width)*voice.duration});
+})();
+</script>
 </body>
 </html>
